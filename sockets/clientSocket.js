@@ -16,25 +16,25 @@ function setupClientSocket(server) {
             socket.broadcast.emit('message', message);
         });
 
-        socket.on('create or join', function (room) {
-            log('Received request to create or join room ' + room);
+        socket.on('create or join', function (room) {log('Received request to create or join room ' + room);
 
-            const abc = io.sockets.sockets;
-            const numClients = Object.keys(abc).length;
-            log('Room ' + room + ' now has ' + numClients + ' client(s)');
+        let  clientsInRoom = io.nsps['/'].adapter.rooms[room];
+        let numClients = clientsInRoom === undefined ? 0 : Object.keys(clientsInRoom.sockets).length;
 
-            if (numClients === 1) {
-                socket.join(room);
-                log(socket.id, room);
-                socket.emit('created', room, socket.id);
+        log('Room ' + room + ' now has ' + (numClients) + ' client(s)');
 
-            } else {
-                log(socket.id, room);
-                io.sockets.in(room).emit('join', room);
-                socket.join(room);
-                socket.emit('joined', room, socket.id);
-                io.sockets.in(room).emit('ready');
-            }
+        if (numClients === 0) {
+            socket.join(room);
+            log('Client ID ' + socket.id + ' created room ' + room);
+            socket.emit('created', room, socket.id);
+
+        } else {
+            log('Client ID ' + socket.id + ' joined room ' + room);
+            io.sockets.in(room).emit('join', room);
+            socket.join(room);
+            socket.emit('joined', room, socket.id);
+            io.sockets.in(room).emit('ready');
+        }
         });
 
         socket.on('ipaddr', function () {
