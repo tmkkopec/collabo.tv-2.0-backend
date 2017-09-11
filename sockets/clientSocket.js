@@ -25,6 +25,7 @@ function setupClientSocket(server) {
 
         if (numClients === 0) {
             socket.join(room);
+			
             log('Client ID ' + socket.id + ' created room ' + room);
             socket.emit('created', room, socket.id);
 
@@ -48,8 +49,9 @@ function setupClientSocket(server) {
             }
         });
 
-        socket.on('bye', function () {
-            console.log('received bye');
+        socket.on('logout', function () {
+            log('Received request tologout from room ' + room);
+			socket.leave(room);
         });
 
     });
