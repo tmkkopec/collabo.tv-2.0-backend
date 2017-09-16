@@ -11,12 +11,11 @@ function setupClientSocket(server) {
     let userRegister = new Register();
     let rooms = {};
 
-    let io = socketIO(server, {path: '/groupcall'}).listen(server);
+    let io = socketIO.listen(server);
     let wsUrl = url.parse(ws_kurento).href;
 
-    console.log('TO SIE WYPISUJE')
     io.on('connection', socket => {
-        console.log('A TO NIE');
+
         // error handle
         socket.on('error', error => {
             console.error(`Connection %s error : %s`, socket.id, error);
@@ -74,7 +73,7 @@ function setupClientSocket(server) {
     function joinRoom(socket, message, callback) {
 
         // get room
-        getRoom(message.roomName, (error, room) => {
+        getRoom(message.room, (error, room) => {
             if (error) {
                 callback(error);
                 return;
@@ -100,7 +99,7 @@ function setupClientSocket(server) {
     function getRoom(roomName, callback) {
         let room = rooms[roomName];
 
-        if (room === null) {
+        if (room == null) {
             console.log(`create new room : ${roomName}`);
             getKurentoClient((error, kurentoClient) => {
                 if (error) {
