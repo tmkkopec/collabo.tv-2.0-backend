@@ -28,6 +28,7 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 clientSocket(server);
 
 /**
