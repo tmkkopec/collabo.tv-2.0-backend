@@ -147,7 +147,7 @@ function setupClientSocket(server) {
         room.pipeline.create('WebRtcEndpoint', (error, outgoingMedia) => {
             if (error) {
                 console.error('no participant in room');
-                if (Object.keys(room.participants).length === 0) {
+                if (Object.keys(room.participants).length === 0 && room.pipeline!=null) {
                     room.pipeline.release();
                 }
                 return callback(error);
@@ -364,7 +364,7 @@ function setupClientSocket(server) {
         if (incoming == null) {
             console.log(`user : ${userSession.id} create endpoint to receive video from : ${sender.id}`);
             getRoom(userSession.roomName, (error, room) => {
-                if (error) {
+                if (error) {	
                     console.error(error);
                     callback(error);
                     return;
