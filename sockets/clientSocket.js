@@ -147,7 +147,7 @@ function setupClientSocket(server) {
         room.pipeline.create('WebRtcEndpoint', (error, outgoingMedia) => {
             if (error) {
                 console.error('no participant in room');
-                if (Object.keys(room.participants).length === 0) {
+                if (Object.keys(room.participants).length === 0 && room.pipeline) {
                     room.pipeline.release();
                 }
                 return callback(error);
@@ -303,7 +303,7 @@ function setupClientSocket(server) {
         }
 
         // Release pipeline and delete room when room is empty
-        if (Object.keys(room.participants).length == 0) {
+        if (Object.keys(room.participants).length === 0 && room.pipeline) {
             room.pipeline.release();
             delete rooms[userSession.roomName];
         }
@@ -371,7 +371,7 @@ function setupClientSocket(server) {
                 }
                 room.pipeline.create('WebRtcEndpoint', (error, incoming) => {
                     if (error) {
-                        if (Object.keys(room.participants).length === 0) {
+                        if (Object.keys(room.participants).length === 0 && room.pipeline) {
                             room.pipeline.release();
                         }
                         console.error('error: ' + error);
