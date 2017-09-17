@@ -361,7 +361,7 @@ function setupClientSocket(server) {
 
         let incoming = userSession.incomingMedia[sender.name];
 
-        if (incoming === null) {
+        if (incoming == null) {
             console.log(`user : ${userSession.id} create endpoint to receive video from : ${sender.id}`);
             getRoom(userSession.roomName, (error, room) => {
                 if (error) {
