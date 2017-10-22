@@ -5,7 +5,10 @@ const kurento = require('kurento-client');
 const Register = require('./lib/Register');
 const Session = require('./lib/Session');
 
-const ws_kurento = 'ws://localhost:8888/kurento';
+const kurentoIpAddress = process.env.KURENTO_IP || 'localhost';
+const ws_kurento = `ws://${kurentoIpAddress}:8888/kurento`;
+
+console.log(`expecting kurento websocket on ${ws_kurento}`);
 
 function setupClientSocket(server) {
     let userRegister = new Register();

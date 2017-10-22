@@ -23,9 +23,9 @@ router.get('/user', function (req, res) {
     const nickname = req.cookies.nickname;
     const roomId = req.cookies.roomId;
     const authenticated = typeof nickname !== 'undefined' && typeof roomId !== 'undefined';
-    console.log(nickname, roomId)
+
     res.status(authenticated ? 200 : 401)
-        .json({'authenticated': authenticated});
+        .json({authenticated: authenticated});
 });
 
 /**
