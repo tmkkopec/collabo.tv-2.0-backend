@@ -10,12 +10,19 @@ const ws_kurento = 'ws://localhost:8888/kurento';
 function setupClientSocket(server) {
     let userRegister = new Register();
     let rooms = {};
-
+    let roomCreated=false;
     let io = socketIO.listen(server);
     let wsUrl = url.parse(ws_kurento).href;
-
+    let usersInRoom={};
     io.on('connection', socket => {
+	socket.on('messageDC', function(data){
+		for (let i in usersInRoom) {
+                
+                    usersInRoom[i].DCsendMessage(data);
+                
+            }    		
 
+  	});
         // error handle
         socket.on('error', error => {
             console.error(`Connection %s error : %s`, socket.id, error);
@@ -35,6 +42,10 @@ function setupClientSocket(server) {
                             console.error(`join Room error ${err}`);
                         }
                     });
+				socket.emit('CreatedRoom', roomCreated);
+				roomCreated=false;
+			
+			
                     break;
                 case 'receiveVideoFrom':
                     receiveVideoFrom(socket, message.sender, message.sdpOffer, (error) => {
@@ -100,6 +111,7 @@ function setupClientSocket(server) {
         let room = rooms[roomName];
 
         if (room == null) {
+	    roomCreated = true;
             console.log(`create new room : ${roomName}`);
             getKurentoClient((error, kurentoClient) => {
                 if (error) {
@@ -184,7 +196,7 @@ function setupClientSocket(server) {
             });
 
 
-            let usersInRoom = room.participants;
+            usersInRoom = room.participants;
 
 
             // notify other user that new user is joing
