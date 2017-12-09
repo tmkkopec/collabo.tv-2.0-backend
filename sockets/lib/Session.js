@@ -72,7 +72,13 @@ module.exports = class Session {
             console.error('socket is null');
         }
     }
-
+    DCsendMessage(data) {
+        if (this.socket) {
+            this.socket.emit('messageDC', data);
+        } else {
+            console.error('socket is null');
+        }
+    }
 
     setOutgoingMedia(outgoingMedia) {
         this.outgoingMedia = outgoingMedia;
