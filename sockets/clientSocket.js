@@ -94,12 +94,14 @@ function setupClientSocket(server) {
             }
             // join user to room
             join(socket, room, message.name, (err, user) => {
+                if(user!=null){
                 console.log(`join success : ${user.name}`);
                 if (err) {
                     callback(err);
                     return;
                 }
                 callback();
+            }
             });
         });
     }
