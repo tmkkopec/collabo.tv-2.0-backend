@@ -307,11 +307,13 @@ function setupClientSocket(server) {
         for (let i in usersInRoom) {
             const user = usersInRoom[i];
             // release viewer from this
+            if(user!=null &&  userSession!=null && userSession.name!=null && user.incomingMedia[userSession.name]){
             user.incomingMedia[userSession.name].release();
             delete user.incomingMedia[userSession.name];
 
             // notify all user in the room
             user.sendMessage(data);
+        }
         }
 
         // Release pipeline and delete room when room is empty
