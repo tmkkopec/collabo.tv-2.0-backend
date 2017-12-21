@@ -17,6 +17,7 @@ function setupClientSocket(server) {
     let io = socketIO.listen(server);
     let wsUrl = url.parse(ws_kurento).href;
     let usersInRoom={};
+    let room;
     io.on('connection', socket => {
 	socket.on('messageDC', function(data){
 		for (let i in usersInRoom) {
@@ -39,6 +40,53 @@ function setupClientSocket(server) {
             console.log(`Connection: %s receive message`, message.id);
 
             switch (message.id) {
+	       case 'askWhoIsOwner':
+                   
+		 room = rooms[message.room];	
+			if(room){
+			socket.emit('message' , { 'id': 'owner' ,'owner': room.owner,'todo':message.todo });	
+			}
+                    break;
+	
+	       case 'newOwner':
+                   
+		 room = rooms[message.room]; // take room	
+			if(room){
+			room.owner=message.owner;
+			
+			const msg={
+                       		 id: 'owner',
+                    	    	 owner: room.owner,
+				todo: message.todo
+                    		};
+
+			socket.emit('message' , msg);
+			usersInRoom = room.participants;
+			for (let i in usersInRoom) {
+                
+			usersInRoom[i].sendMessage(msg);
+				
+			    }    	
+			}
+                    break;
+		case 'createNewChannel':
+
+		console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$jazda dupa");
+			room = rooms[message.room];
+		console.log(message.room);
+			usersInRoom=room.participants;
+	   for (let i in usersInRoom) {
+                if (usersInRoom[i].name !== message.ownerName) {
+                    usersInRoom[i].sendMessage({
+                        id: 'connectToNewChannel'
+
+                    });
+			console.log("$$$$$$$$$$$$$$$" + usersInRoom[i].name);
+                }
+            }
+		
+		break;
+
                 case 'joinRoom':
                     joinRoom(socket, message, err => {
                         if (err) {
@@ -87,7 +135,7 @@ function setupClientSocket(server) {
     function joinRoom(socket, message, callback) {
 
         // get room
-        getRoom(message.room, (error, room) => {
+        getRoom(message.room, message.name, (error, room) => {
             if (error) {
                 callback(error);
                 return;
@@ -112,7 +160,7 @@ function setupClientSocket(server) {
      * @param {string} roomName
      * @param {function} callback
      */
-    function getRoom(roomName, callback) {
+    function getRoom(roomName,ownerName , callback) {
         let room = rooms[roomName];
 
         if (room == null) {
@@ -128,6 +176,7 @@ function setupClientSocket(server) {
                         return callback(error);
                     }
                     room = {
+			owner: ownerName,
                         name: roomName,
                         pipeline: pipeline,
                         participants: {},
@@ -382,7 +431,7 @@ function setupClientSocket(server) {
 
         if (incoming == null) {
             console.log(`user : ${userSession.id} create endpoint to receive video from : ${sender.id}`);
-            getRoom(userSession.roomName, (error, room) => {
+            getRoom(userSession.roomName,"", (error, room) => {
                 if (error) {
                     console.error(error);
                     callback(error);
