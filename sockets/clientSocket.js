@@ -71,9 +71,8 @@ function setupClientSocket(server) {
                     break;
 		case 'createNewChannel':
 
-		console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$jazda dupa");
+		
 			room = rooms[message.room];
-		console.log(message.room);
 			usersInRoom=room.participants;
 	   for (let i in usersInRoom) {
                 if (usersInRoom[i].name !== message.ownerName) {
@@ -81,7 +80,7 @@ function setupClientSocket(server) {
                         id: 'connectToNewChannel'
 
                     });
-			console.log("$$$$$$$$$$$$$$$" + usersInRoom[i].name);
+			
                 }
             }
 		
